@@ -1,0 +1,12 @@
+#ignore folder
+/djangoProject/.idea/
+/djangoProject/experiments/
+/djangoProject/djangoProject/__pycache__/
+/djangoProject/users/__pycache__
+/djangoProject/users/.idea/
+/djangoProject/users/migrations/
+
+#ignore files
+*.iml
+*.xml
+*.pyc
