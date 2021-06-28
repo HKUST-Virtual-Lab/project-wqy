@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>实验列表</title>
+</head>
+<body>
+{% if user %}
+    <h3>点击实验名查看详情：</h3>
+    <ul> <!--循环输出-->
+    {% for experiment in user.my_experiment.all%}
+        <a href="{{ experiment.id }}/download/">{{ experiment.name }}</a><br>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No experiments exist.</p>
+{% endif %}
+</body>
+</html>

@@ -1,13 +1,13 @@
-from django.shortcuts import render
-
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, ExperimentInfo
 from django.contrib import auth
 from .forms import RegistrationForm, LoginForm, ProfileForm, PwdChangeForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+
+from .forms import ExperimentForm
 
 
 @login_required
@@ -87,41 +87,82 @@ def register(request):
             email = form.cleaned_data['email']
             password = form.cleaned_data['password2']
 
-      # 使用内置User自带create_user方法创建用户，不需要使用save()
+            # 使用内置User自带create_user方法创建用户，不需要使用save()
             user = User.objects.create_user(username=username, password=password, email=email)
 
-      # 如果直接使用objects.create()方法后不需要使用save()
+            # 如果直接使用objects.create()方法后不需要使用save()
             user_profile = UserProfile(user=user)
             user_profile.save()
 
             return HttpResponseRedirect("/accounts/login/")
 
     else:
-         form = RegistrationForm()
-
-         return render(request, 'users/registration.html', {'form': form})
+        form = RegistrationForm()
+        return render(request, 'users/registration.html', {'form': form})
 
 
 def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-         username = form.cleaned_data['username']
-         password = form.cleaned_data['password']
-
-         user = auth.authenticate(username=username, password=password)
-
-         if user is not None and user.is_active:
-            auth.login(request, user)
-            return HttpResponseRedirect(reverse('users:profile', args=[user.id]))
-
-         else:
-         # 登陆失败
-              return render(request, 'users/login.html', {'form': form,'message': 'Wrong password. Please try again.'})
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = auth.authenticate(username=username, password=password)
+            if user is not None and user.is_active:
+                auth.login(request, user)
+                return HttpResponseRedirect(reverse('users:profile', args=[user.id]))
+            else:
+                # 登陆失败
+                return render(request, 'users/login.html',
+                              {'form': form, 'message': 'Wrong password. Please try again.'})
     else:
         form = LoginForm()
 
     return render(request, 'users/login.html', {'form': form})
 
 
-# Create your views here.
+# 郭廷章parts
+
+
+@login_required
+def upload_experiment(request, pk):  # 实验上传界面
+    if request.method == 'POST':
+
+        # 获取当前登录用户信息，提取用户id，存入experiment
+        experiment = ExperimentInfo()
+        experiment.user = get_object_or_404(UserProfile, id=pk)
+        experiment.save()
+
+        # 根据experiment创建modelform实例experimentform，处理上传并保存
+        experimentform = ExperimentForm(request.POST, request.FILES, instance=experiment)
+        if experimentform.is_valid():
+            experimentform.save()
+            return HttpResponseRedirect('/accounts/success/')
+    else:
+        experiment = ExperimentForm()
+    return render(request, 'experiments/upload.html', {'form': experiment})
+
+
+@login_required
+def success_response(request):  # 上传成功提示界面
+    return render(request, 'experiments/success.html')
+
+
+@login_required
+def file_list(request, pk):  # 实验详情页面
+    user = get_object_or_404(UserProfile, id=pk)
+    return render(request, 'experiments/fileList.html', {'user': user})
+
+
+@login_required
+def result(request, pk, fid):  # 跳转到对应视频
+    experiment = get_object_or_404(ExperimentInfo, id=fid)
+    path = '/{result_path}'.format(
+        result_path=experiment.result_path
+    )
+    return HttpResponseRedirect(path)
+
+
+def downloadview(request):
+    print('fuck me')
+    return render(request, 'experiments/download.html')

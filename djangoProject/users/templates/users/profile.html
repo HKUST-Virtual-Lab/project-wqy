@@ -24,6 +24,8 @@
 <a href="{% url 'users:profile_update' user.id %}">Edit</a>
 | <a href="{% url 'users:pwd_change' user.id %}">Change Password </a>
 | <a href="{% url 'users:logout' %}">Logout</a>
+| <a href="{% url 'users:upload' user.id %}">upload your experiment</a>
+| <a href="{% url 'users:filelist' user.id%}">your experiments list</a>
 {% endif %}
 
 {% endblock %}

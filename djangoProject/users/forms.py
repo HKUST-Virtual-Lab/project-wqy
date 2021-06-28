@@ -4,10 +4,13 @@ from django import forms
 from django.contrib.auth.models import User
 import re
 
+from .models import ExperimentInfo
+
 
 def email_check(email):
     pattern = re.compile(r"\"?([-a-zA-Z0-9.`?{}]+@\w+\.\w+)\"?")
     return re.match(pattern, email)
+
 
 class RegistrationForm(forms.Form):
     username = forms.CharField(label='Username', max_length=50)
@@ -121,3 +124,11 @@ class PwdChangeForm(forms.Form):
             raise forms.ValidationError("Password mismatch. Please enter again.")
 
         return password2
+
+
+# 郭廷章parts
+
+class ExperimentForm(ModelForm):
+    class Meta:
+        model = ExperimentInfo
+        fields = ('name', 'duration', 'purpose', 'agentNumber', 'file')
