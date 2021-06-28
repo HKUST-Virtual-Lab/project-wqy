@@ -1,0 +1,10 @@
+#ignore folder
+/djangoProject/.idea/
+/djangoProject/migrations/
+/djangoProject/venv/
+
+#ignore files
+Project2_db
+/djangoProject/users/__pycache__
+/djangoProject/__pycache__
+/djangoProject/djangoProject/__pycache__
