@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>实验列表</title>
+</head>
+<body>
+<ul> <!--循环输出-->
+    {% for experiment in experiment_list%}
+    <a href="{% url 'users:download' user.id%}{{ experiment.result }}">{{ experiment.name }}</a>
+    {% endfor %}
+</ul>
+</body>
+</html>

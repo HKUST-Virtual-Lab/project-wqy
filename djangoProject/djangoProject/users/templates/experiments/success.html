@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Success</title>
+</head>
+<body>
+<p>上传成功！还有<span id="sp">5</span>秒跳转到个人主页...</p>
+<script>
+    onload=function () {
+        setInterval(go,1000)
+    };
+    let x=4;
+    function go() {
+
+        if (x>=0){
+            document.getElementById("sp").innerText=x;
+        }else {
+            location.href="{% url 'users:profile' user.id%}";
+        }
+        x--;
+    }
+</script>
+</body>
+</html>
